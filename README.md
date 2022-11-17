@@ -27,7 +27,7 @@ Try to comment your code and name things so that they're understandable, e.g. X_
 If you feel like it, I recommend installing the Black tool for PyCharm: https://black.readthedocs.io/en/stable/integrations/editors.html
 It cleans the code and makes it more legible
 
-#requirements.txt
+# requirements.txt
 you'll notice there is a file named requirements.txt . This file is to ensure we all know
 what libraries are needed to run the code and so that we can install these libraries easily 
 with the command
