@@ -22,7 +22,8 @@ General best practices/things to do:
     
 Additional info on how it works: https://medium.com/@androidmatheny/using-git-and-github-on-group-projects-d636be2cdd4d
 
-Try to comment your code and name things so that they're understandable, e.g. X_train_no_outliers vs X_WoO
+Try to comment your code and name things so that they're understandable, e.g. X_train_no_outliers vs X_WoO. Document each file 
+and function saying what is expected as input and output, i.e. data type, sizes, ...
 
 If you feel like it, I recommend installing the Black tool for PyCharm: https://black.readthedocs.io/en/stable/integrations/editors.html
 It cleans the code and makes it more legible
