@@ -11,6 +11,7 @@ General best practices/things to do:
         - it will ask you to write a comment explaining your commit
         - then click commit or "commit and push" is generally easier
     - add a request to pull your branch onto main (can be done from GitHub website or from command line probably but idk how)
+    - merge the pull request onto main (idk yet if only I can do that or you guys can too)
     
 Additional info on how it works: https://medium.com/@androidmatheny/using-git-and-github-on-group-projects-d636be2cdd4d
 
