@@ -13,6 +13,13 @@ General best practices/things to do:
     - add a request to pull your branch onto main (can be done from GitHub website or from command line probably but idk how)
     - merge the pull request onto main (idk yet if only I can do that or you guys can too)
     
+    
+- The next time you want to add/modify code, you can repeat the same (checking out onto a new branch from main) or you can 
+  - select the development branch with your name and checkout onto it
+  - update main 
+  - from the "main" dropdown list, select "merge into current" 
+  - then proceed to do your modifications
+    
 Additional info on how it works: https://medium.com/@androidmatheny/using-git-and-github-on-group-projects-d636be2cdd4d
 
 Try to comment your code and name things so that they're understandable, e.g. X_train_no_outliers vs X_WoO
