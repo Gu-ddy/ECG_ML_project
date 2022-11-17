@@ -7,7 +7,7 @@ General best practices/things to do:
     - update the main branch (on PyCharm: click on "main" in bottom right of your screen, click on main again and select update)
     - checkout from the main branch with branch name development_<your_name>
     - make your changes
-    - commit your changes (in PyCharm: green arrow top right)
+    - commit your changes (in PyCharm: green check mark top right)
         - it will ask you to write a comment explaining your commit
         - then click commit or "commit and push" is generally easier
     - add a request to pull your branch onto main (can be done from GitHub website or from command line probably but idk how)
