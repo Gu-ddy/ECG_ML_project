@@ -5,3 +5,4 @@ random
 scipy
 matplotlib
 neurokit2
+heartpy
