@@ -3,12 +3,11 @@ import neurokit2 as nk
 
 """
 Parameters to play around with:
-    SAMPLING_RATE: might be given, same for all the samples?
     method for ecg_peaks
     method for ecg_delineate
 """
 
-SAMPLING_RATE = 500 #seems to be quite important
+SAMPLING_RATE = 300
 
 def peak_detection(filtered_signal):
     """

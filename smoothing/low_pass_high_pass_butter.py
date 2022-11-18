@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 
 def filter_signal(
-    data, butterworth_frequency=10, critical_frequency=5000, sampling_frequency=1000
+    data, butterworth_frequency=10, critical_frequency=5000, sampling_frequency=300
 ):
     """
     :param data: dataset we want to filter
@@ -30,16 +30,16 @@ if __name__ == "__main__":
     leo_training_path = (
         "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_train.csv"
     )
-    # jon_training_path = ...
+    jon_training_path = ("C:/Users/jonny/Documents/Studium/ETH/Advanced Machine Learning/Projects/Project2/X_train.csv")
     # guglielmo_training_path = ...
 
     leo_filtered_data_path = (
         "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_train_filtered.csv"
     )
-    # jon_filtered_data_path = ...
+    jon_filtered_data_path = ("C:/Users/jonny/Documents/Studium/ETH/Advanced Machine Learning/Projects/Project2/X_train_filtered.csv")
     # guglielmo_filtered_data_path = ...
 
-    X_train_raw = pd.read_csv(leo_training_path)
+    X_train_raw = pd.read_csv(jon_training_path)
     X_train_values = X_train_raw.drop("id", axis=1)
 
     X_train_filtered = filter_signal(X_train_values)
@@ -59,5 +59,5 @@ if __name__ == "__main__":
             ax2.set_title('filtered data')
             plt.show()
 
-    X_train_filtered.to_csv(leo_filtered_data_path)
+    X_train_filtered.to_csv(jon_filtered_data_path)
     print("er fijo de zaccagni é de zaniolo")
