@@ -1,3 +1,7 @@
 numpy==1.23.4
 pandas==1.5.1
 black==22.10.0
+random
+scipy
+matplotlib
+neurokit2
