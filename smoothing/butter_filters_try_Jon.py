@@ -41,7 +41,8 @@ def filter_signal(
         low_and_high_pass_filtered_data = hp.filtering.filter_signal(high_pass_filtered_data, cutoff=cutoff_high, sample_rate=sampling_frequency, order=order, filtertype='lowpass')
         low_high_and_powerline_pass_filtered_data_row = hp.filtering.filter_signal(low_and_high_pass_filtered_data, cutoff=powerline, sample_rate=sampling_frequency, filtertype='notch')
         low_high_and_powerline_pass_filtered_data.append(low_high_and_powerline_pass_filtered_data_row)
-        
+        if (iteration%1000) == 0:
+            print(iteration, "/", nr_samples, "iterations done.")
         
     low_high_and_powerline_pass_filtered_data = pd.DataFrame(low_high_and_powerline_pass_filtered_data)
     

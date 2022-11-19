@@ -7,9 +7,7 @@ Parameters to play around with:
     method for ecg_delineate
 """
 
-SAMPLING_RATE = 300
-
-def peak_detection(filtered_signal):
+def peak_detection(filtered_signal, SAMPLING_RATE = 300):
     """
     Detects PQRST peaks in a filtered signal.
 
@@ -36,6 +34,9 @@ def peak_detection(filtered_signal):
         ecg_signal = ecg_signal[~np.isnan(ecg_signal)] #ignore all nans (filling up the row)
         _, rpeaks = nk.ecg_peaks(ecg_signal, sampling_rate=SAMPLING_RATE) #different methods are possible
         __, waves_peak = nk.ecg_delineate(ecg_signal, rpeaks, sampling_rate=SAMPLING_RATE, method="peak") #different methods are possible
+        waves_peak['ECG_R_Peaks'] = rpeaks['ECG_R_Peaks'].tolist()
         PQRST_peaks[iteration] = waves_peak
+        if (iteration%100) == 0:
+            print(iteration, "/", nr_samples, "iterations done.")
 
     return PQRST_peaks
