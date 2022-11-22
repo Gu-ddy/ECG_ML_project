@@ -32,8 +32,8 @@ def peak_detection(filtered_signal, SAMPLING_RATE = 300):
     for iteration in range(nr_samples): #neurokit only works with vectors and not with matrices
         ecg_signal = filtered_signal[iteration]
         ecg_signal = ecg_signal[~np.isnan(ecg_signal)] #ignore all nans (filling up the row)
-        _, rpeaks = nk.ecg_peaks(ecg_signal, sampling_rate=SAMPLING_RATE) #different methods are possible
-        __, waves_peak = nk.ecg_delineate(ecg_signal, rpeaks, sampling_rate=SAMPLING_RATE, method="peak") #different methods are possible
+        _, rpeaks = nk.ecg_peaks(ecg_signal, sampling_rate=SAMPLING_RATE, method='promac') #different methods are possible
+        __, waves_peak = nk.ecg_delineate(np.pad(ecg_signal, (0,10), 'median'), rpeaks['ECG_R_Peaks'], sampling_rate=SAMPLING_RATE, method='peaks') #different methods are possible
         waves_peak['ECG_R_Peaks'] = rpeaks['ECG_R_Peaks'].tolist()
         PQRST_peaks[iteration] = waves_peak
         if (iteration%100) == 0:
