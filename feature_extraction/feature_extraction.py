@@ -157,13 +157,13 @@ def feature_extraction(filtered_signal, peaks):
             idx = idx.astype(int)
             single_df = filtered_signal.iloc[it, :]
 
+            # amplitude of peaks
+            features["amplitudes"]["list"] = single_df[idx]
+
+            # time between peaks
+            features["intervals"]["list"] = np.diff(idx)
+
             for measure in features.values():
-                # amplitude of peaks
-                features["amplitudes"]["list"] = single_df[idx]
-
-                # time between peaks
-                measure["list"] = np.diff(idx)
-
                 # update the dataframe
                 measure["dataframe"].iloc[it, range(len(measure["list"]))] = measure[
                     "list"
@@ -172,21 +172,24 @@ def feature_extraction(filtered_signal, peaks):
         # calculate other intervals. Since we're dealing with differences between different types of peak locations,
         # the nans are filled to a defined variable num_to_fill. Further incentivises the use of median as statistic,
         # as we're bound to have large outliers in the differences. It affects std a lot tho
-        num_to_fill = 0
 
         Q_indices = np.array(peaks[it]["ECG_Q_Peaks"])
+        num_to_fill = np.nanmean(Q_indices)
         Q_indices = np.nan_to_num(Q_indices, nan=num_to_fill)
         Q_indices = Q_indices.astype(int)
 
         S_indices = np.array(peaks[it]["ECG_S_Peaks"])
+        num_to_fill = np.nanmean(S_indices)
         S_indices = np.nan_to_num(S_indices, nan=num_to_fill)
         S_indices = S_indices.astype(int)
 
         T_offsets_indices = np.array(peaks[it]["ECG_T_Offsets"])
+        num_to_fill = np.nanmean(T_offsets_indices)
         T_offsets_indices = np.nan_to_num(T_offsets_indices, nan=num_to_fill)
         T_offsets_indices = T_offsets_indices.astype(int)
 
         P_onset_indices = np.array(peaks[it]["ECG_P_Onsets"])
+        num_to_fill = np.nanmean(P_onset_indices)
         P_onset_indices = np.nan_to_num(P_onset_indices, nan=num_to_fill)
         P_onset_indices = P_onset_indices.astype(int)
 
