@@ -62,7 +62,7 @@ if __name__ == "__main__":
     jon_filtered_data_path = ("C:/Users/jonny/Documents/Studium/ETH/Advanced Machine Learning/Projects/Project2/X_train_filtered.csv")
     # guglielmo_filtered_data_path = ...
 
-    X_train_raw = pd.read_csv(jon_training_path)
+    X_train_raw = pd.read_csv(leo_training_path)
     X_train_values = X_train_raw.drop("id", axis=1)
 
     X_train_filtered = filter_signal(X_train_values)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
             ax2.set_title('filtered data')
             plt.show()
 
-    X_train_filtered.to_csv(jon_filtered_data_path)
+    X_train_filtered.to_csv(leo_filtered_data_path)
     print("er fijo de zaccagni é de zaniolo")
 
 
