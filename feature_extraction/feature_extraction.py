@@ -97,7 +97,8 @@ def feature_extraction(filtered_signal, peaks, statistic = "median"):
             idx = idx[~np.isnan(idx)] #ignore all nans
             idx = idx.astype(int)
             amplitudes = features["amplitudes"]["list"]
-            amplitudes.append(filtered_signal[it, idx])
+            single_df = filtered_signal.iloc[it, :]
+            amplitudes.append(single_df[idx])
 
             #time between peaks
             intervals = features["intervals"]["list"]
