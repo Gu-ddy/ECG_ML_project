@@ -1,4 +1,4 @@
-- 
+- Try working on entire dataset !!
 
 - Preprocessing
     - Still can add new features such as PTT
