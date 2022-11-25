@@ -99,6 +99,7 @@ def feature_extraction(filtered_signal, peaks):
     QT_intervals = []
     PR_intervals = []
 
+    # todo: merge redundant predictions (XX_intervals) using a statistic or a regression
     # create a feature map that allows us to copy the least amount of code possible and use for loops
     feature_map = {
         "R": {
@@ -152,11 +153,13 @@ def feature_extraction(filtered_signal, peaks):
             # get and modify peak locations
             peak_type_key = f"ECG_{peak_type}_Peaks"
             idx = np.array(peaks[it][peak_type_key])
-            # todo: check if we should just ignore or fill nans. Might not be great for interval calculation
+
+            # todo: drop nans after np.diff
             idx = idx[~np.isnan(idx)]  # ignore all nans
             idx = idx.astype(int)
             single_df = filtered_signal.iloc[it, :]
 
+            # todo: check why amplitudes throw nans at certain peak locations
             # amplitude of peaks
             features["amplitudes"]["list"] = single_df[idx]
 
@@ -173,6 +176,7 @@ def feature_extraction(filtered_signal, peaks):
         # the nans are filled to a defined variable num_to_fill. Further incentivises the use of median as statistic,
         # as we're bound to have large outliers in the differences. It affects std a lot tho
 
+        # todo: drop nans after subtractions instead of before
         Q_indices = np.array(peaks[it]["ECG_Q_Peaks"])
         num_to_fill = np.nanmean(Q_indices)
         Q_indices = np.nan_to_num(Q_indices, nan=num_to_fill)
@@ -225,6 +229,8 @@ def feature_extraction(filtered_signal, peaks):
         PR_intervals_df.iloc[it, range(len(PR_intervals[it]))] = PR_intervals[it]
 
     features = pd.DataFrame(index=range(nr_samples), columns=list(tables_dict.keys()))
+
+    # todo: add more features (median of mean, ...)
     for key, table in tables_dict.items():
         if "std" in key:
             features[key] = table.std(axis=1)
