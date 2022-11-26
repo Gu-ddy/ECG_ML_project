@@ -5,12 +5,12 @@ from scipy import stats
 """
 extracts all features from tutorial slides. For each sample (patient), the features are extracted, and their med_abs_dev is 
 calculated. 
-For a given patient, the function extracts the peak locations from the previously peaks detected peaks, and, for each
+For a given patient, the function extracts the peak locations from the previously detected peaks, and, for each
 peak type, it fetches the amplitudes from the filtered_signal df, and calculates their intervals (e.g. the time 
 difference between one R peak and the next one). The function also calculates time differences across peaks, 
 specifically the QRS, QT and PR intervals.
     For each peak type and its measurement (i.e. amplitude or interval), a dataframe is created containing each 
-    patient's values for said measure. Finally, the median and standard of each patient's values is calculated for 
+    patient's values for said measure. Finally, the median and med_abs_dev of each patient's values is calculated for 
     each of these dataframes, and the result is put into the final features dataframe.
     
 There are a few inconsistencies which may be due to the following facts:
@@ -21,14 +21,6 @@ There are a few inconsistencies which may be due to the following facts:
     Purely from observations, I noticed that most times, when this happened, it was because a P_peak or a P_onset was
     not detected at the beginning, so I fixed this by appending a 0 at the beginning of the P_peaks list.
     This phenomenon is relatively rare, happening roughly once every 200 patients.
-    
-    - For the nans within a given patient's peak dictionary, e.g. the P_peak dictionary for patient 2, it makes sense to
-    remove these values when we're evaluating amplitudes. However, for time differences, it may be more wise to replace
-    these nans by another value, for example the mean/median location (?) of the P_peaks for said patients.
-    While this isn't a big deal for calculating intervals of the same type of peak (e.g. PP_interval), 
-    it causes problems for cross-peak intervals. So far, all the nans have been replaced with 0,
-    but I think it makes more sense to replace these nans with the mean/median locations, at least for interval 
-    calculations.
 """
 
 
@@ -120,60 +112,40 @@ def feature_extraction(filtered_signal, peaks):
         index=range(nr_samples), columns=["nans"], dtype=float
     )
 
-    amplitudes_of_P = []
-    PP_intervals = []
-    amplitudes_of_R = []
-    RR_intervals = []
-    amplitudes_of_S = []
-    SS_intervals = []
-    amplitudes_of_Q = []
-    QQ_intervals = []
-    amplitudes_of_T = []
-    TT_intervals = []
-    amplitudes_of_P_On = []
-    POPO_intervals = []
-    amplitudes_of_T_Off = []
-    TOTO_intervals = []
-
-
-    QRS_intervals = []
-    QT_intervals = []
-    PR_intervals = []
-
     # todo: merge redundant predictions (XX_intervals) using a statistic or a regression
     # create a feature map that allows us to copy the least amount of code possible and use for loops
     feature_map = {
         "P": {
-            "amplitudes": {"list": amplitudes_of_P, "dataframe": amplitudes_of_P_df},
-            "intervals": {"list": PP_intervals, "dataframe": PP_intervals_df},
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_P_df},
+            "intervals": {"list": [], "dataframe": PP_intervals_df},
             "nans": {"list": [], "dataframe": P_nans_df},
         },
         "R": {
-            "amplitudes": {"list": amplitudes_of_R, "dataframe": amplitudes_of_R_df},
-            "intervals": {"list": RR_intervals, "dataframe": RR_intervals_df},
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_R_df},
+            "intervals": {"list": [], "dataframe": RR_intervals_df},
         },
         "S": {
-            "amplitudes": {"list": amplitudes_of_S, "dataframe": amplitudes_of_S_df},
-            "intervals": {"list": SS_intervals, "dataframe": SS_intervals_df},
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_S_df},
+            "intervals": {"list": [], "dataframe": SS_intervals_df},
             "nans": {"list": [], "dataframe": S_nans_df},
         },
         "Q": {
-            "amplitudes": {"list": amplitudes_of_Q, "dataframe": amplitudes_of_Q_df},
-            "intervals": {"list": QQ_intervals, "dataframe": QQ_intervals_df},
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_Q_df},
+            "intervals": {"list": [], "dataframe": QQ_intervals_df},
             "nans": {"list": [], "dataframe": Q_nans_df},
         },
         "T": {
-            "amplitudes": {"list": amplitudes_of_T, "dataframe": amplitudes_of_T_df},
-            "intervals": {"list": TT_intervals, "dataframe": TT_intervals_df},
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_T_df},
+            "intervals": {"list": [], "dataframe": TT_intervals_df},
             "nans": {"list": [], "dataframe": T_nans_df},
         },
         "P_Onsets": {
-            "amplitudes": {"list": amplitudes_of_P_On, "dataframe": amplitudes_of_P_On_df},
-            "intervals": {"list": POPO_intervals, "dataframe": POPO_intervals_df},
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_P_On_df},
+            "intervals": {"list": [], "dataframe": POPO_intervals_df},
         },
         "T_Offsets": {
-            "amplitudes": {"list": amplitudes_of_T_Off, "dataframe": amplitudes_of_T_Off_df},
-            "intervals": {"list": TOTO_intervals, "dataframe": TOTO_intervals_df}
+            "amplitudes": {"list": [], "dataframe": amplitudes_of_T_Off_df},
+            "intervals": {"list": [], "dataframe": TOTO_intervals_df}
         },
     }
 
@@ -249,27 +221,17 @@ def feature_extraction(filtered_signal, peaks):
                     "list"
                 ]
 
-        # calculate other intervals. Since we're dealing with differences between different types of peak locations,
-        # the nans are filled to a defined variable num_to_fill. Further incentivises the use of median as statistic,
-        # as we're bound to have large outliers in the differences. It affects med_abs_dev a lot tho
-
         Q_indices = np.array(peaks[it]["ECG_Q_Peaks"])
-        """
-        num_to_fill = np.nanmean(Q_indices)
-        Q_indices = np.nan_to_num(Q_indices, nan=num_to_fill)
-        Q_indices = Q_indices.astype(int)"""
-
         S_indices = np.array(peaks[it]["ECG_S_Peaks"])
         T_offsets_indices = np.array(peaks[it]["ECG_T_Offsets"])
         P_onset_indices = np.array(peaks[it]["ECG_P_Onsets"])
 
         try:
+            # calculate interval differences, and then throw away the nans
             QRS_intervals = (S_indices - Q_indices)[~np.isnan(S_indices - Q_indices)]
             QT_intervals = (T_offsets_indices - Q_indices)[~np.isnan(T_offsets_indices - Q_indices)]
             PR_intervals = (Q_indices - P_onset_indices)[~np.isnan(Q_indices - P_onset_indices)]
         # catch error in case there is a mismatch in array size between two of the arrays we use to define intervals.
-        # The new values are appended because I was working with long lists before, but this is no longer necessary.
-        # However, it still works
         except ValueError:
             if len(Q_indices) < len(S_indices):
                 Q_indices = np.concatenate(([0], Q_indices))
