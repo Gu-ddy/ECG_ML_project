@@ -33,7 +33,7 @@ There are a few inconsistencies which may be due to the following facts:
 
 
 def feature_extraction(filtered_signal, peaks):
-    """ "
+    """
     Extracts features from the signal (manually).
 
     Parameters
@@ -107,9 +107,6 @@ def feature_extraction(filtered_signal, peaks):
         index=range(nr_samples), columns=list(np.arange(0, max_peak_list_length)), dtype=float
     )
 
-    R_nans_df = pd.DataFrame(
-        index=range(nr_samples), columns=["nans"], dtype=float
-    )
     P_nans_df = pd.DataFrame(
         index=range(nr_samples), columns=["nans"], dtype=float
     )
@@ -154,7 +151,6 @@ def feature_extraction(filtered_signal, peaks):
         "R": {
             "amplitudes": {"list": amplitudes_of_R, "dataframe": amplitudes_of_R_df},
             "intervals": {"list": RR_intervals, "dataframe": RR_intervals_df},
-            "nans": {"list": [], "dataframe": R_nans_df},
         },
         "S": {
             "amplitudes": {"list": amplitudes_of_S, "dataframe": amplitudes_of_S_df},
@@ -191,7 +187,6 @@ def feature_extraction(filtered_signal, peaks):
         "PP_interval_med_abs_dev": PP_intervals_df,
         "R_amp": amplitudes_of_R_df,
         "R_amp_med_abs_dev": amplitudes_of_R_df,
-        "R_nans": R_nans_df,
         "RR_interval": RR_intervals_df,
         "RR_interval_med_abs_dev": RR_intervals_df,
         "S_amp": amplitudes_of_S_df,
@@ -245,7 +240,7 @@ def feature_extraction(filtered_signal, peaks):
             nan_dropped_difference = nan_difference[~np.isnan(nan_difference)]
             features["intervals"]["list"] = nan_dropped_difference.astype(int)
 
-            if "nans" in features.values():
+            if "nans" in features.keys():
                 features["nans"]["list"] = [sum([1 for x in np.isnan(idx) if x])]
 
             for measure in features.values():
@@ -265,15 +260,13 @@ def feature_extraction(filtered_signal, peaks):
         Q_indices = Q_indices.astype(int)"""
 
         S_indices = np.array(peaks[it]["ECG_S_Peaks"])
-
         T_offsets_indices = np.array(peaks[it]["ECG_T_Offsets"])
-
         P_onset_indices = np.array(peaks[it]["ECG_P_Onsets"])
 
         try:
-            QRS_intervals.append((S_indices - Q_indices))
-            QT_intervals.append(T_offsets_indices - Q_indices)
-            PR_intervals.append(Q_indices - P_onset_indices)
+            QRS_intervals = (S_indices - Q_indices)[~np.isnan(S_indices - Q_indices)]
+            QT_intervals = (T_offsets_indices - Q_indices)[~np.isnan(T_offsets_indices - Q_indices)]
+            PR_intervals = (Q_indices - P_onset_indices)[~np.isnan(Q_indices - P_onset_indices)]
         # catch error in case there is a mismatch in array size between two of the arrays we use to define intervals.
         # The new values are appended because I was working with long lists before, but this is no longer necessary.
         # However, it still works
@@ -293,13 +286,13 @@ def feature_extraction(filtered_signal, peaks):
             else:
                 print(f"iteration {it}, still not caught it")
 
-            QRS_intervals.append((S_indices - Q_indices)[~np.isnan(S_indices - Q_indices)])
-            QT_intervals.append((T_offsets_indices - Q_indices)[~np.isnan(T_offsets_indices - Q_indices)])
-            PR_intervals.append((Q_indices - P_onset_indices)[~np.isnan(Q_indices - P_onset_indices)])
+            QRS_intervals = (S_indices - Q_indices)[~np.isnan(S_indices - Q_indices)]
+            QT_intervals = (T_offsets_indices - Q_indices)[~np.isnan(T_offsets_indices - Q_indices)]
+            PR_intervals = (Q_indices - P_onset_indices)[~np.isnan(Q_indices - P_onset_indices)]
 
-        QRS_interval_df.iloc[it, range(len(QRS_intervals[it]))] = QRS_intervals[it].astype(int)
-        QT_interval_df.iloc[it, range(len(QT_intervals[it]))] = QT_intervals[it].astype(int)
-        PR_intervals_df.iloc[it, range(len(PR_intervals[it]))] = PR_intervals[it].astype(int)
+        QRS_interval_df.iloc[it, range(len(QRS_intervals))] = QRS_intervals.astype(int)
+        QT_interval_df.iloc[it, range(len(QT_intervals))] = QT_intervals.astype(int)
+        PR_intervals_df.iloc[it, range(len(PR_intervals))] = PR_intervals.astype(int)
 
     features = pd.DataFrame(index=range(nr_samples), columns=list(tables_dict.keys()))
 
