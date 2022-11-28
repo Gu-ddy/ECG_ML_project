@@ -42,6 +42,22 @@ def merge_intervals(features_df, peak_types, y):
     new_features_df.append(y_pred, axis=1)
     return new_features_df
 
+def interval_statistical_merge(features_df, peak_types, statistic = "median"):
+    interval_column_names = [x + f"{x}_interval" for x in peak_types]
+    interval_std_column_names = [x + f"{x}_interval_med_abs_dev" for x in peak_types]
+    intervals_df = features_df[interval_column_names]
+    intervals_std_df = features_df[interval_std_column_names]
+
+    if statistic == "median":  # can eventually add other statistics
+        median_intervals = intervals_df.median(axis=1)
+        median_std = intervals_std_df.median(axis=1)
+
+    new_features_df = features_df.drop(interval_column_names, axis=1)
+    new_features_df.drop(interval_std_column_names, axis=1, inplace=True)
+    new_features_df["heartbeat_interval"] = median_intervals
+    new_features_df["heartbeat_med_abs_dev"] = median_std
+    return new_features_df
+
 if __name__ == "__main__":
     leo_features_df_path = (
         "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/features_data_update.csv"
@@ -63,5 +79,6 @@ if __name__ == "__main__":
     features_df = pd.read_csv(leo_features_df_path)
     peak_types = ["P", "R", "Q", "T", "S", "PO", "TO"]
 
-    new_features = merge_intervals(features_df, peak_types, y)
+    """new_features = merge_intervals(features_df, peak_types, y)"""
+    new_features = interval_statistical_merge(features_df, peak_types)
     new_features.to_csv(leo_new_df_path)
