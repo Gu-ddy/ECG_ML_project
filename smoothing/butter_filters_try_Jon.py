@@ -62,7 +62,16 @@ if __name__ == "__main__":
     jon_filtered_data_path = ("C:/Users/jonny/Documents/Studium/ETH/Advanced Machine Learning/Projects/Project2/X_train_filtered.csv")
     # guglielmo_filtered_data_path = ...
 
-    X_train_raw = pd.read_csv(leo_training_path)
+    leo_test_data_path = ("/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test.csv")
+    leo_filtered_test_data_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_filtered.csv"
+
+    X_test_raw = pd.read_csv(leo_test_data_path)
+    X_test_values = X_test_raw.drop("id", axis=1)
+
+    X_test_filtered = filter_signal(X_test_values)
+    X_test_filtered.to_csv(leo_filtered_test_data_path)
+
+    """X_train_raw = pd.read_csv(leo_training_path)
     X_train_values = X_train_raw.drop("id", axis=1)
 
     X_train_filtered = filter_signal(X_train_values)
@@ -81,10 +90,10 @@ if __name__ == "__main__":
             ax2.plot(plot_data_filtered)
             ax2.set_title('filtered data')
             plt.show()
-
+    
     X_train_filtered.to_csv(leo_filtered_data_path)
     print("er fijo de zaccagni é de zaniolo")
-
+    """
 
 
 ################## Variant that can do it directly with the matrix but doesn't seem to work well because it has to work with nans

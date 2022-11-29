@@ -45,7 +45,12 @@ def feature_extraction(filtered_signal, peaks):
     nr_samples, max_length_signal = filtered_signal.shape
 
     # the maximum length of the dictionaries in PQRST_peaks is 135. We initialize all the empty dataframes
-    max_peak_list_length = 135
+    max_peak_list_length = 0
+    for value in peaks.values():
+        length = len(value["ECG_P_Peaks"])
+        if length > max_peak_list_length:
+            max_peak_list_length = length
+
     amplitudes_of_P_df = pd.DataFrame(
         index=range(nr_samples), columns=list(np.arange(0, max_peak_list_length)), dtype=float
     )
@@ -286,8 +291,19 @@ if __name__ == "__main__":
     jon_features_df_path = ...
     guglielmo_features_df_path = ...
 
-    X_train_filtered = pd.read_csv(leo_filtered_data_path)
+    leo_test_peaks_path = (
+        "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/peaks_path.npy"
+    )
+    leo_filtered_test_path = ("/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_filtered.csv")
+    leo_test_features_path = ("/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_features.csv")
+
+    X_test_filtered = pd.read_csv(leo_filtered_test_path)
+    peaks = np.load(leo_test_peaks_path, allow_pickle=True).item()
+
+    test_features = feature_extraction(X_test_filtered, peaks)
+    test_features.to_csv(leo_test_features_path)
+    """X_train_filtered = pd.read_csv(leo_filtered_data_path)
     peaks = np.load(leo_peaks_path, allow_pickle="TRUE").item()
 
     features = feature_extraction(X_train_filtered, peaks)
-    features.to_csv(leo_features_df_path)
+    features.to_csv(leo_features_df_path)"""
