@@ -42,12 +42,12 @@ def peak_detection(filtered_signal, SAMPLING_RATE = 300):
 
     return PQRST_peaks
 
-filtered_test_data_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_filtered.csv"
-X_test_filtered = pd.read_csv(filtered_test_data_path)
-X_test_filtered = np.array(X_test_filtered)
+Euler_filtered_test_data_path = "lbarberi/AML_task2/X_test_filtered.csv"
+X_test_filtered = pd.read_csv(Euler_filtered_test_data_path)
 X_test_peaks = peak_detection(X_test_filtered)
 print("done with peak detection")
-peaks_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_peaks.npy"
-np.save("peaks_path.npy", X_test_peaks)
-# X_test_peaks.to_csv(peaks_path)
+Euler_peaks_path = "lbarberi/AML_task2/X_test_peaks.csv"
+X_test_peaks.to_csv(Euler_peaks_path)
 print("saved succesfully")
+
+# gives error for package numpy on virtual machine...

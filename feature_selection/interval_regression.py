@@ -60,22 +60,22 @@ def interval_statistical_merge(features_df, peak_types, statistic = "median"):
 
 if __name__ == "__main__":
     leo_features_df_path = (
-        "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/features_data_update.csv"
+        "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_features.csv"
     )
     jon_features_df_path = ...
     guglielmo_features_df_path = ...
 
     leo_new_df_path = (
-        "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/features_data_merged_intervals.csv"
+        "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_data_merged_intervals.csv"
     )
     jon_new_df_path = ...
     guglielmo_new_df_path = ...
 
-    leo_y_train_path = (
+    """leo_y_train_path = (
         "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/y_train.csv"
     )
 
-    y = pd.read_csv(leo_y_train_path)
+    y = pd.read_csv(leo_y_train_path)"""
     features_df = pd.read_csv(leo_features_df_path)
     peak_types = ["P", "R", "Q", "T", "S", "PO", "TO"]
 

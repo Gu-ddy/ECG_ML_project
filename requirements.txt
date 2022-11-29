@@ -7,3 +7,5 @@ matplotlib
 neurokit2
 heartpy
 sklearn
+tensorflow
+PyWavelets
