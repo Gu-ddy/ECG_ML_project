@@ -9,3 +9,6 @@ heartpy
 sklearn
 tensorflow
 PyWavelets
+biosppy
+statsmodels
+pywt
