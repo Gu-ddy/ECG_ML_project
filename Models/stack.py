@@ -150,7 +150,7 @@ x_test_path = (
 )
 x_test = pd.read_csv(x_test_path)
 final_predictions = stack.predict(x_test)
-submission_dict = {"id": x_test["id"].copy(), "y": final_predictions}
+submission_dict = {"id": x_test.index, "y": final_predictions}
 final_predictions = pd.DataFrame(submission_dict)
 final_predictions.to_csv("/cluster/home/lbarberi/final_predictions.csv")
 
