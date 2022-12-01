@@ -54,8 +54,8 @@ def xgboost_learn(x, y, inner):
     model = xgboost.XGBClassifier()
     param_grid = {
         "n_estimators": [2, 3, 4],
-        "tree_method": "gpu_hist",
-        "sampling_method": "gradient_based",
+        "tree_method": ["auto", "gpu_hist"],
+        "sampling_method": ["uniform", "gradient_based"],
     }
 
     tune = GridSearchCV(model, param_grid, scoring="f1_micro", cv=inner, verbose=0)
@@ -150,7 +150,7 @@ x_test_path = (
 )
 x_test = pd.read_csv(x_test_path)
 final_predictions = stack.predict(x_test)
-submission_dict = {"id": x_test["id"].copy(), "y": final_predictions}
+submission_dict = {"id": x_test.index, "y": final_predictions}
 final_predictions = pd.DataFrame(submission_dict)
 final_predictions.to_csv("/cluster/home/lbarberi/final_predictions.csv")
 
