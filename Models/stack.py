@@ -54,8 +54,8 @@ def xgboost_learn(x, y, inner):
     model = xgboost.XGBClassifier()
     param_grid = {
         "n_estimators": [2, 3, 4],
-        "tree_method": "gpu_hist",
-        "sampling_method": "gradient_based",
+        "tree_method": ["auto", "gpu_hist"],
+        "sampling_method": ["uniform", "gradient_based"],
     }
 
     tune = GridSearchCV(model, param_grid, scoring="f1_micro", cv=inner, verbose=0)
