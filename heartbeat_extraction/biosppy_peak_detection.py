@@ -224,7 +224,7 @@ def get_features(signal):
     try:
         X += list(compute_PQRST(signal))
     except:
-        X += [0] * 30
+        X += [0] * 20
         print(f"nk2 filter not working for patient {patient}")
         not_nk_filtered = True
 
@@ -236,10 +236,11 @@ def get_features(signal):
 
 
 if __name__ == "__main__":
-    data_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_train.csv"
-    labels_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/y_train.csv"
+    # data_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_train.csv"
+    data_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test.csv"
+    #labels_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/y_train.csv"
     data = pd.read_csv(data_path, index_col="id")
-    labels = pd.read_csv(labels_path, index_col="id").to_numpy()
+    #labels = pd.read_csv(labels_path, index_col="id").to_numpy()
 
     total_not_hp_filtered = list()
     total_not_nk_filtered = list()
@@ -263,4 +264,4 @@ if __name__ == "__main__":
     print(f"len(total_not_nk_filtered): {len(total_not_nk_filtered)}")
     X = np.array(features, dtype="object")
 
-    np.save("X_train.npy", X)
+    np.save("X_test.npy", X)
