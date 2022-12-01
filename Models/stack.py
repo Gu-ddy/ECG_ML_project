@@ -131,9 +131,9 @@ def stack_learn(x_path, y_path, models):
 
 
 x_train_path = (
-    "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_train_Davide.csv"
+    "/cluster/home/lbarberi/X_train_Davide.csv"
 )
-y_train_path = "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/y_train.csv"
+y_train_path = "/cluster/home/lbarberi/y_train.csv"
 
 models = {"random_forest": random_forest_learn,
           "naive_bayes": naive_bayes_learn,
@@ -146,12 +146,12 @@ models = {"random_forest": random_forest_learn,
 stack = stack_learn(x_train_path, y_train_path, models)
 
 x_test_path = (
-    "/Users/leonardobarberi/Desktop/ETH/Semester_1/AML/task2/X_test_Davide.csv"
+    "/cluster/home/lbarberi/X_test_Davide.csv"
 )
 x_test = pd.read_csv(x_test_path)
 final_predictions = stack.predict(x_test)
 submission_dict = {"id": x_test["id"].copy(), "y": final_predictions}
 final_predictions = pd.DataFrame(submission_dict)
-final_predictions.to_csv("lbarberi/final_predictions.csv")
+final_predictions.to_csv("/cluster/home/lbarberi/final_predictions.csv")
 
 print("o")
