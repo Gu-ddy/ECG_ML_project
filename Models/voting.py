@@ -7,12 +7,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 
-from sklearn.feature_selection import SelectKBest, f_classif
+from sklearn.feature_selection import SelectKBest, f_classif, mutual_info_classif, SelectFpr, SelectPercentile
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import KFold
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import StackingClassifier, ExtraTreesClassifier
+from sklearn.ensemble import StackingClassifier, ExtraTreesClassifier, VotingClassifier
 from sklearn.ensemble import RandomForestClassifier, BaggingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.gaussian_process import GaussianProcessClassifier
@@ -42,10 +42,12 @@ def naive_bayes_learn(x, y, inner):
 
 
 def random_forest_learn(x, y, inner):
-    model = RandomForestClassifier(n_estimators=150)
+    model = RandomForestClassifier(random_state=42)
     param_grid = {
         "class_weight": ["balanced", None],
         "max_features": ["log2", "sqrt", None],
+        "max_samples": [0.8, None],
+        "n_estimators": [80, 100, 120, 150]
     }
 
     tune = GridSearchCV(
@@ -161,7 +163,7 @@ def MLP_learn(x, y, inner):
     return tune
 
 
-def stack_learn(x, y, models):
+def vote_learn(x, y, models):
     y = np.ravel(y)
 
     inner = KFold(n_splits=5, shuffle=True, random_state=42)
@@ -191,17 +193,13 @@ def stack_learn(x, y, models):
 
         print(f"estimators: {estimators}")
 
-        stack_param_grid = {
-            "final_estimator": [LogisticRegression(multi_class="ovr"),
-                                LogisticRegression(multi_class="multinomial"),
-                                ExtraTreesClassifier(random_state=42),
-                                ],
-            "passthrough": [True, False],
+        voting_param_grid = {
+            "voting": ["hard", "soft"],
         }
-        stack = StackingClassifier(estimators=estimators)
+        voter = VotingClassifier(estimators=estimators)
         tune = GridSearchCV(
-            stack,
-            param_grid=stack_param_grid,
+            voter,
+            param_grid=voting_param_grid,
             n_jobs=-1,
             verbose=3,
         )
@@ -223,6 +221,8 @@ def stack_learn(x, y, models):
         return tune.best_estimator_
 
 
+
+
 x_train_path = "/cluster/home/lbarberi/X_train_Davide_new.csv"
 x_train = pd.read_csv(x_train_path)
 y_train_path = "/cluster/home/lbarberi/y_train.csv"
@@ -239,20 +239,19 @@ models = {
     "random_forest": [random_forest_learn, 0, RandomForestClassifier],
     "xgb": [xgboost_learn, 1, xgboost.XGBClassifier],
     # "svm": [svm_learn, 2, SVC],
+    # "MLP_classifier": [MLP_learn, 3, MLPClassifier],
+    # "KNeighboursClassifier": [KNeighbours_learn, 3, KNeighborsClassifier],
+    # "naive_bayes": [naive_bayes_learn, 4, GaussianNB],
     # "bagging_classifier": [bagging_classifier_learn, 3, BaggingClassifier],
-    # "KNeighboursClassifier": [KNeighbours_learn, 4, KNeighborsClassifier],
-    # "MLP_classifier": [MLP_learn, 5, MLPClassifier],
-
-    # "naive_bayes": [naive_bayes_learn, 5, GaussianNB],
     # "gaussian_processes": [gaussian_processes_learn, 6, GaussianProcessClassifier],
 }
 
-stack = stack_learn(x_train, y_train, models)
+stack = vote_learn(x_train, y_train, models)
 
 if RANK == SIZE - 1:
     final_predictions = stack.predict(x_test)
     submission_dict = {"id": x_test.index, "y": final_predictions}
     final_predictions = pd.DataFrame(submission_dict)
-    final_predictions.to_csv("/cluster/home/lbarberi/final_predictions_stack.csv")
+    final_predictions.to_csv("/cluster/home/lbarberi/final_predictions_voting.csv")
 
     print("o")
