@@ -19,13 +19,13 @@ command lines that you might want to use to transfer files/directories onto the 
 
 For example, to transfer the Pycharm project I'm currently working on onto the cluster, I used the command 
 
-`scp -r /Users/leonardobarberi/PycharmProjects/AML_task2 lbarberi@euler.ethz.ch:/cluster/home/lbarberi`
+`scp -r /Users/leonardobarberi/PycharmProjects/AML_task2 *username*@euler.ethz.ch:/cluster/home/lbarberi`
 
 from my terminal. I can now find the folder `AML_task2` and all its files from the virtual machine, on the directory
 `./AML_task2/`
 
 To read an output from a job, in this example with the file name `AML_task2/output`, you can run the command `cat AML_task2/output`.
-I'm not entirely sure but I think the virtual machines run on Ubuntu so all the commands from there should be the same.
+The virtual machines run on Ubuntu so all the commands from there should be the same.
 
 ## Sending Jobs
 The whole batch system is explained in [section 5: Using the batch system](https://scicomp.ethz.ch/wiki/Getting_started_with_clusters#Using_the_batch_system). To run any 
